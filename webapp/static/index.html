@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Story Voice</title>
+    <style>
+        body { background:#1e1e1e; color:#f0f0f0; font-family: Arial, sans-serif; margin:0; }
+        .wrapper { max-width:900px; margin:40px auto; padding:20px; background:#2b2b2b; border-radius:8px; }
+        h1 { text-align:center; margin-top:0; }
+        section { margin-top:30px; }
+        label { display:block; margin-top:10px; }
+        input, textarea, select { width:100%; padding:10px; margin-top:5px; background:#444; color:#fff; border:none; border-radius:4px; }
+        button { margin-top:15px; padding:10px 20px; background:#4e9a06; color:white; border:none; border-radius:4px; cursor:pointer; }
+        button:hover { background:#3c7a04; }
+        audio { display:block; margin-top:20px; width:100%; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <h1>Story Voice</h1>
+    <section id="create-personality">
+        <h2>Create Personality</h2>
+        <form id="personality-form">
+            <label for="pname">Name</label>
+            <input id="pname" required>
+            <label for="pvoice">Voice Sample (.wav)</label>
+            <input type="file" id="pvoice" accept=".wav" required>
+            <button type="submit">Save Personality</button>
+        </form>
+    </section>
+    <section id="story">
+        <h2>Generate Story</h2>
+        <form id="voice-form">
+            <label for="personality">Personality</label>
+            <select id="personality"></select>
+            <label for="text">Story Text</label>
+            <textarea id="text" placeholder="Paste your story"></textarea>
+            <label for="textFile">Or Upload Text File</label>
+            <input type="file" id="textFile" accept=".txt">
+            <label for="voiceFile">Temporary Voice Sample (.wav)</label>
+            <input type="file" id="voiceFile" accept=".wav">
+            <button type="submit">Generate</button>
+        </form>
+        <audio id="resultAudio" controls></audio>
+    </section>
+</div>
+<script>
+async function loadPersonalities(){
+    const res = await fetch('/personalities');
+    const data = await res.json();
+    const sel = document.getElementById('personality');
+    sel.innerHTML = '';
+    data.personalities.forEach(p=>{
+        const opt = document.createElement('option');
+        opt.value = p; opt.textContent = p; sel.appendChild(opt);
+    });
+}
+
+const pForm = document.getElementById('personality-form');
+pForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append('name', document.getElementById('pname').value);
+    fd.append('voice', document.getElementById('pvoice').files[0]);
+    await fetch('/personalities', {method:'POST', body:fd});
+    document.getElementById('pname').value = '';
+    document.getElementById('pvoice').value = '';
+    await loadPersonalities();
+});
+
+const form = document.getElementById('voice-form');
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    const textFile = document.getElementById('textFile').files[0];
+    let text = document.getElementById('text').value;
+    if(textFile){
+        text = await textFile.text();
+    }
+    fd.append('text', text);
+    const personality = document.getElementById('personality').value;
+    if(personality){ fd.append('personality', personality); }
+    const voiceFile = document.getElementById('voiceFile').files[0];
+    if(voiceFile){ fd.append('voice', voiceFile); }
+    const res = await fetch('/generate', { method: 'POST', body: fd });
+    if(res.ok){
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        document.getElementById('resultAudio').src = url;
+    }else{
+        alert('Error generating audio');
+    }
+});
+
+loadPersonalities();
+</script>
+</body>
+</html>
