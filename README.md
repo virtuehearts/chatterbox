@@ -85,7 +85,7 @@ pip install -e .
 ```
 
 ```bash
-python webapp/app.py
+uvicorn webapp.app:app --host 0.0.0.0 --port 8000
 ```
 
 Open the reported URL in your browser. Use the **Create Personality** form to

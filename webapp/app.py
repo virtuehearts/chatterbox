@@ -60,3 +60,8 @@ async def generate(text: str = Form(...), personality: str = Form(None), voice: 
         import torchaudio as ta
         ta.save(out.name, wav, model.sr)
         return FileResponse(out.name, media_type="audio/wav", filename="output.wav")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("webapp.app:app", host="0.0.0.0", port=8000)
