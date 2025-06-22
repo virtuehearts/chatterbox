@@ -78,6 +78,12 @@ your stories aloud. The interface mimics the look of **StoryBlocks** and lets
 you save "personalities" (named voice samples) that can be reused for multiple
 stories. This is useful when testing in environments like GitHub Codespaces.
 
+Before launching the server, make sure the project dependencies are installed:
+
+```bash
+pip install -e .
+```
+
 ```bash
 python webapp/app.py
 ```
