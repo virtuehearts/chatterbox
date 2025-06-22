@@ -18,7 +18,10 @@ dependencies = [
     "diffusers==0.29.0",
     "resemble-perth==1.0.1",
     "conformer==0.3.2",
-    "safetensors==0.5.3"
+    "safetensors==0.5.3",
+    "fastapi>=0.110",
+    "uvicorn>=0.23",
+    "python-multipart>=0.0.7"
 ]
 
 [project.urls]

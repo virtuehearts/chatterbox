@@ -71,6 +71,22 @@ ta.save("test-2.wav", wav, model.sr)
 ```
 See `example_tts.py` and `example_vc.py` for more examples.
 
+## Story Voice Web App
+
+You can run a small FastAPI application that serves a web interface for reading
+your stories aloud. The interface mimics the look of **StoryBlocks** and lets
+you save "personalities" (named voice samples) that can be reused for multiple
+stories. This is useful when testing in environments like GitHub Codespaces.
+
+```bash
+python webapp/app.py
+```
+
+Open the reported URL in your browser. Use the **Create Personality** form to
+upload a short `.wav` sample and give it a name. Then pick a personality from
+the dropdown or upload a temporary voice sample along with your story text or
+text file. The app will return synthesized audio with the selected voice.
+
 # Supported Lanugage
 Currenlty only English.
 
